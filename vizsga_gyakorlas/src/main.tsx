@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AllPizza from './Pages/AllPizza.tsx'
 import Cart from './Pages/Cart.tsx'
-import Header from './header.tsx'
+import Header from './Header.tsx'
 
 
 createRoot(document.getElementById('root')!).render(

@@ -6,7 +6,9 @@ import { Button, Card, Col, Container, Row } from "react-bootstrap";
 
 const AllPizza = () => {
   const [pizzak, setPizzak] = useState<Array<Pizza>>([]);
-  const [kosar, setKosar] = useState<Array<number>>(JSON.parse(localStorage.getItem("kosar") ?? "[]"));
+  const [kosar, setKosar] = useState<Array<number>>(
+    JSON.parse(localStorage.getItem("kosar") ?? "[]"),
+  );
 
   useEffect(() => {
     apiClient
@@ -16,30 +18,35 @@ const AllPizza = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("kosar", JSON.stringify(kosar))
-  }, [kosar])
+    localStorage.setItem("kosar", JSON.stringify(kosar));
+  }, [kosar]);
 
   const cardItem = (p: Pizza) => {
     return (
-      <Col>
+      <Col lg={4}>
         <Card style={{ width: "18rem" }}>
           <Card.Img variant="top" src={`${baseURL}/kepek/${p.imageUrl}`} />
           <Card.Body>
             <Card.Title>{p.nev}</Card.Title>
             <Card.Text>{p.leiras}</Card.Text>
-            <Button onClick={() => {
-              if(!kosar.includes(p.id)){
-              setKosar([...kosar, Number(p.id)])
-              toast.success("Sikeresen a kosarába tette a pizzát")
-              }
-              else{
-                toast.error("Sikeretelen hozzáadás")
-              }
-
-            }} variant="info">
+          </Card.Body>
+          <Card.Footer>
+            <Card.Text style={{float: "left", margin: "5px 10px 0px 0px"}}>
+              Ár: {p.ar} Ft
+            </Card.Text>
+            <Button style={{float:"right"}}
+              onClick={() => {
+                if (!kosar.includes(p.id)) {
+                  setKosar([...kosar, Number(p.id)]);
+                  toast.success("Sikeresen a kosarába tette a pizzát");
+                } else {
+                  toast.error("Sikeretelen hozzáadás");
+                }
+              }}
+              variant="info">
               Kosárba
             </Button>
-          </Card.Body>
+          </Card.Footer>
         </Card>
       </Col>
     );
