@@ -2,14 +2,19 @@
 
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import App from '../Pages/AllPizza';
+import AllPizza from '../Pages/AllPizza';
+import { renderToString } from 'react-dom/server';
 
-describe('App (real API)', () => {
-    it('igazi API-ból betölti és megjeleníti a Margheritát', async () => {
-        render(<App />);
-
-        // megvárja, amíg a useEffect lefut + API válasz megjön + render
-        const el = await screen.findByText('Margherita', {}, { timeout: 10000 });
+describe('Margherita', () => {
+    it("Tartalmazza-e a Margherita pizzát", async () => {
+        render(<AllPizza></AllPizza>)
+        const el = await screen.findByText('Magherita', {}, {timeout: 10000})
         expect(el).toBeTruthy();
-    });
-});
+    })
+})
+describe("Kosar", () => {
+    it('Van-e kosár felirat a főoldalon', () => {
+        const html = renderToString(<AllPizza/>)
+        expect(html).toContain("Kosár")
+    })
+})

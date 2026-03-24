@@ -1,64 +1,49 @@
 import { useEffect, useState } from "react";
-import apiClient, { baseURL } from "../api/apiClient";
 import type { Pizza } from "../types/Pizza";
+import { useNavigate } from "react-router-dom";
+import apiClient, { baseURL } from "../api/apiClient";
 import { toast } from "react-toastify";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 
 const AllPizza = () => {
-  const [pizzak, setPizzak] = useState<Array<Pizza>>([]);
-  const [kosar, setKosar] = useState<Array<number>>(
-    JSON.parse(localStorage.getItem("kosar") ?? "[]"),
-  );
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    apiClient
-      .get("/pizzak")
-      .then((response) => setPizzak(response.data))
-      .catch(() => toast.error("A pizzák betöltése sikertelen volt"));
-  }, []);
+    const [pizzak, setPizzak] = useState<Array<Pizza>>([]);
+    const [kosar, setKosar] = useState<Array<number>>(JSON.parse(localStorage.getItem("kosar") ?? "[]"))
+    
+    useEffect(() => {
+        apiClient.get("/pizzak").then((res) => setPizzak(res.data)).catch(() => toast.error("Sikeretelen a pizzák lekérése"))
+    }, [])
+    useEffect(() => {
+        localStorage.setItem("kosar", JSON.stringify(kosar))
+    }, [kosar])
 
-  useEffect(() => {
-    localStorage.setItem("kosar", JSON.stringify(kosar));
-  }, [kosar]);
-
-  const cardItem = (p: Pizza) => {
-    return (
-      <Col lg={4}>
-        <Card style={{ width: "18rem" }}>
-          <Card.Img variant="top" src={`${baseURL}/kepek/${p.imageUrl}`} />
-          <Card.Body>
-            <Card.Title>{p.nev}</Card.Title>
-            <Card.Text>{p.leiras}</Card.Text>
-          </Card.Body>
-          <Card.Footer>
-            <Card.Text style={{float: "left", margin: "5px 10px 0px 0px"}}>
-              Ár: {p.ar} Ft
-            </Card.Text>
-            <Button style={{float:"right"}}
-              onClick={() => {
-                if (!kosar.includes(p.id)) {
-                  setKosar([...kosar, Number(p.id)]);
-                  toast.success("Sikeresen a kosarába tette a pizzát");
-                } else {
-                  toast.error("Sikeretelen hozzáadás");
-                }
-              }}
-              variant="info">
-              Kosárba
-            </Button>
-          </Card.Footer>
-        </Card>
-      </Col>
-    );
-  };
-
-  return (
+    const generateCard = (p:Pizza) => {
+        return(
+        <Col>
+            <Card style={{width: "18rem"}}>
+                <Card.Img variant="top" src={`${baseURL}/kepek/${p.imageUrl}`}></Card.Img>               
+                <Card.Title>{p.nev}</Card.Title>
+                <Card.Body>
+                    {p.leiras}
+                </Card.Body>
+                <Card.Footer>
+                    {p.ar}Ft
+                    <br />
+                <Button variant="success" onClick={() => navigate(`/${p.id}`)}>Megtekintés</Button>
+                <Button variant="info" onClick={() => {setKosar([...kosar, Number(p.id)]), toast.success("Sikeresen a kosárba raktad!")}}>Kosárba</Button>
+                </Card.Footer>
+            </Card>
+        </Col>
+        )
+    }
+    return<>
     <Container>
-      <Row xs={"auto"} md={"auto"} className="g-4">
-        {pizzak.map((i) => cardItem(i))}
-      </Row>
+        <Row>
+            {pizzak.map((i) => generateCard(i))}
+        </Row>
     </Container>
-  );
-};
+    </>
+}
 
 export default AllPizza;

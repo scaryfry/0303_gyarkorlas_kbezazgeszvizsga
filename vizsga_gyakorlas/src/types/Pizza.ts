@@ -3,5 +3,5 @@ export type Pizza = {
     leiras: string,
     ar: number,
     imageUrl: string,
-    id: number
+    id?: number
 }
